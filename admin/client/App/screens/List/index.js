@@ -57,7 +57,7 @@ const ListView = React.createClass({
 				isOpen: false,
 			},
 			checkedItems: {},
-			constrainTableWidth: true,
+			constrainTableWidth: false,
 			manageMode: false,
 			showCreateForm: false,
 			showUpdateForm: false,
