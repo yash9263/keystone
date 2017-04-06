@@ -13,6 +13,9 @@ class FormInput extends Component {
 	focus () {
 		this.target.focus();
 	}
+  select () {
+    this.target.select();
+  }
 	render () {
 		const {
 			aphroditeStyles,

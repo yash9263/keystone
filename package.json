@@ -43,6 +43,7 @@
     "express-request-language": "1.1.9",
     "express-session": "1.15.2",
     "expression-match": "0.0.17",
+    "form-data": "^2.1.2",
     "fs-extra": "1.0.0",
     "glamor": "^2.20.24",
     "grappling-hook": "3.0.0",
@@ -62,6 +63,7 @@
     "mongoose": "4.9.2",
     "morgan": "1.8.1",
     "multer": "0.1.8",
+    "node-sass-middleware": "^0.11.0",
     "numeral": "2.0.6",
     "object-assign": "4.1.1",
     "qs": "4.0.0",
@@ -92,6 +94,7 @@
     "string-to-stream": "1.1.0",
     "vkey": "1.0.1",
     "watchify": "3.8.0",
+    "whatwg-fetch": "^2.0.3",
     "xhr": "2.4.0"
   },
   "devDependencies": {
