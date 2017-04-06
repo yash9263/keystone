@@ -24,12 +24,6 @@ var NumberColumn = React.createClass({
 	},
 	renderValue() {
 		const value = this.value();
-		if (!value || isNaN(value)) return null;
-		const formattedValue =
-			this.props.col.path === "money"
-				? numeral(value).format("$0,0.00")
-				: value;
-
 		if (this.state.editing) {
 			return (
 				<FormInput
@@ -47,7 +41,10 @@ var NumberColumn = React.createClass({
 				/>
 			);
 		} else {
-			return formattedValue;
+			if (!value || isNaN(value)) return value;
+			return this.props.col.path === "money"
+				? numeral(value).format("$0,0.00")
+				: value;
 		}
 	},
 	onKeyPress(event) {
