@@ -33,15 +33,20 @@ module.exports = Field.create({
 		return {
 			value: null,
 			createIsOpen: false,
+			isLoadingOptions: false,
+			options: [],
+			complete: false,
 		};
 	},
 
 	componentDidMount () {
 		this._itemsCache = {};
 		this.loadValue(this.props.value);
+		this.loadOptions('');
 	},
 
 	componentWillReceiveProps (nextProps) {
+		this.loadOptions('', nextProps.values);
 		if (nextProps.value === this.props.value || nextProps.many && compareValues(this.props.value, nextProps.value)) return;
 		this.loadValue(nextProps.value);
 	},
@@ -54,14 +59,18 @@ module.exports = Field.create({
 		return this.props.collapse && !this.props.value;
 	},
 
-	buildFilters () {
+	buildFilters (props) {
 		var filters = {};
 
 		_.forEach(this.props.filters, (value, key) => {
 			if (typeof value === 'string' && value[0] === ':') {
 				var fieldName = value.slice(1);
-
-				var val = this.props.values[fieldName];
+				var val = '';
+				if (props) {
+					val = props[fieldName];
+				} else {
+					val = this.props.values[fieldName];
+				}
 				if (val) {
 					filters[key] = val;
 					return;
@@ -129,26 +138,28 @@ module.exports = Field.create({
 		});
 	},
 
-	// NOTE: this seems like the wrong way to add options to the Select
-	loadOptionsCallback: {},
-	loadOptions (input, callback) {
+	loadOptions (input, props) {
 		// NOTE: this seems like the wrong way to add options to the Select
-		this.loadOptionsCallback = callback;
-		const filters = this.buildFilters();
+
+		this.setState({ isLoadingOptions: true });
+		const filters = this.buildFilters(props);
 		xhr({
 			url: Keystone.adminPath + '/api/' + this.props.refList.path + '?basic&search=' + input + '&' + filters,
 			responseType: 'json',
 		}, (err, resp, data) => {
 			if (err) {
 				console.error('Error loading items:', err);
-				return callback(null, []);
+				return this.setState({ isLoadingOptions: false, options: [] });
 			}
+
 			data.results.forEach(this.cacheItem);
-			callback(null, {
+			this.setState({
 				options: data.results,
 				complete: data.results.length === data.count,
 			});
 		});
+
+		this.setState({ isLoadingOptions: false });
 	},
 
 	valueChanged (value) {
@@ -182,7 +193,7 @@ module.exports = Field.create({
 		}
 
 		// NOTE: this seems like the wrong way to add options to the Select
-		this.loadOptionsCallback(null, {
+		this.setState({
 			complete: true,
 			options: Object.keys(this._itemsCache).map((k) => this._itemsCache[k]),
 		});
@@ -194,10 +205,12 @@ module.exports = Field.create({
 			<div>
 				{/* This input element fools Safari's autocorrect in certain situations that completely break react-select */}
 				<input type="text" style={{ position: 'absolute', width: 1, height: 1, zIndex: -1, opacity: 0 }} tabIndex="-1"/>
-				<Select.Async
+				<Select
+					isLoading={this.state.isLoadingOptions}
+					ref="selectOptions"
 					multi={this.props.many}
 					disabled={noedit}
-					loadOptions={this.loadOptions}
+					options={this.state.options}
 					labelKey="name"
 					name={this.getInputName(this.props.path)}
 					onChange={this.valueChanged}
