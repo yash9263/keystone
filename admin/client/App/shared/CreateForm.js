@@ -147,6 +147,7 @@ const CreateForm = React.createClass({
 			if (!focusWasSet) {
 				fieldProps.autoFocus = focusWasSet = true;
 			}
+
 			form.push(React.createElement(Fields[field.type], fieldProps));
 		});
 
