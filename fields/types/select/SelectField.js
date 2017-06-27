@@ -39,7 +39,6 @@ module.exports = Field.create({
 
 	renderField () {
 		const { numeric, ops, path, value: val } = this.props;
-
 		// TODO: This should be natively handled by the Select component
 		const options = (numeric)
 			? ops.map(function (i) {

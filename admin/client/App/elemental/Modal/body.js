@@ -20,6 +20,8 @@ const classes = {
 		paddingLeft: theme.modal.padding.body.horizontal,
 		paddingRight: theme.modal.padding.body.horizontal,
 		paddingTop: theme.modal.padding.body.vertical,
+		height: '40vh',
+		overflowY: 'scroll',
 	},
 };
 
