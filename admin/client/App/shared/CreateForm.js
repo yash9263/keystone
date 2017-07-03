@@ -37,6 +37,9 @@ const CreateForm = React.createClass({
       var FieldComponent = Fields[field.type];
       values[field.path] = FieldComponent.getDefaultValue(field);
     });
+    Object.keys(this.props.values).forEach(key => {
+      values[key] = this.props.values[key];
+    });
     return {
       values: values,
       alerts: {},
@@ -151,6 +154,7 @@ const CreateForm = React.createClass({
       }
       if (this.props.values[field.path]) {
         fieldProps.value = this.props.values[field.path]
+        fieldProps.disabled = true;
       }
       form.push(React.createElement(Fields[field.type], fieldProps));
     });
