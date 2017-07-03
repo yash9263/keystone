@@ -27,6 +27,7 @@ module.exports = Field.create({
 	statics: {
 		type: "Relationship",
 	},
+
 	getInitialState() {
 		return {
 			value: null,
@@ -36,11 +37,13 @@ module.exports = Field.create({
 			complete: false,
 		};
 	},
+
 	componentDidMount() {
 		this._itemsCache = {};
 		this.loadValue(this.props.value);
 		this.loadOptions("");
 	},
+
 	componentWillReceiveProps(nextProps) {
 		this.loadOptions("", nextProps.values);
 		if (
@@ -50,6 +53,7 @@ module.exports = Field.create({
 			return;
 		this.loadValue(nextProps.value);
 	},
+
 	shouldCollapse() {
 		if (this.props.many) {
 			// many:true relationships have an Array for a value
@@ -60,7 +64,6 @@ module.exports = Field.create({
 
 	buildFilters(props) {
 		var filters = {};
-
 		_.forEach(
 			this.props.filters,
 			(value, key) => {
@@ -78,7 +81,7 @@ module.exports = Field.create({
 					}
 
 					// check if filtering by id and item was already saved
-					if (fieldName === "_id" && Keystone.item) {
+					if (fieldName === ":_id" && Keystone.item) {
 						filters[key] = Keystone.item.id;
 						return;
 					}
@@ -97,11 +100,13 @@ module.exports = Field.create({
 
 		return parts.join("&");
 	},
+
 	cacheItem(item) {
 		item.href =
 			Keystone.adminPath + "/" + this.props.refList.path + "/" + item.id;
 		this._itemsCache[item.id] = item;
 	},
+
 	loadValue(values) {
 		if (!values) {
 			return this.setState({
@@ -146,13 +151,7 @@ module.exports = Field.create({
 				);
 			},
 			(err, expanded) => {
-				if (!this.__isMounted) return;
-				if (
-					this.props.onValuesLoaded &&
-					typeof this.props.onValuesLoaded === "function"
-				) {
-					this.props.onValuesLoaded(this.props.path);
-				}
+				if (!this.isMounted()) return;
 				this.setState({
 					loading: false,
 					value: this.props.many ? expanded : expanded[0],
@@ -194,22 +193,28 @@ module.exports = Field.create({
 
 		this.setState({ isLoadingOptions: false });
 	},
+
 	valueChanged(value) {
-		this.props.onChange({
-			path: this.props.path,
-			value: value,
-		});
+		if (!this.props.disabled) {
+			this.props.onChange({
+				path: this.props.path,
+				value: value,
+			});
+		}
 	},
+
 	openCreate() {
 		this.setState({
 			createIsOpen: true,
 		});
 	},
+
 	closeCreate() {
 		this.setState({
 			createIsOpen: false,
 		});
 	},
+
 	onCreate(item) {
 		this.cacheItem(item);
 		if (Array.isArray(this.state.value)) {
@@ -228,17 +233,10 @@ module.exports = Field.create({
 		});
 		this.closeCreate();
 	},
+
 	renderSelect(noedit) {
-		const inputName = this.getInputName(this.props.path);
-		const emptyValueInput =
-			(this.props.many && (!this.state.value || !this.state.value.length)) ||
-			(!this.props.many && !this.state.value) ? (
-				<input type="hidden" name={inputName} value="" />
-			) : null;
 		return (
 			<div>
-				{/* This input ensures that an empty value is submitted when no related items are selected */}
-				{emptyValueInput}
 				{/* This input element fools Safari's autocorrect in certain situations that completely break react-select */}
 				<input
 					type="text"
@@ -258,7 +256,7 @@ module.exports = Field.create({
 					disabled={noedit}
 					options={this.state.options}
 					labelKey="name"
-					name={inputName}
+					name={this.getInputName(this.props.path)}
 					onChange={this.valueChanged}
 					simpleValue
 					value={this.state.value}
@@ -267,6 +265,7 @@ module.exports = Field.create({
 			</div>
 		);
 	},
+
 	renderInputGroup() {
 		// TODO: find better solution
 		//   when importing the CreateForm using: import CreateForm from '../../../admin/client/App/shared/CreateForm';
@@ -289,6 +288,7 @@ module.exports = Field.create({
 			</Group>
 		);
 	},
+
 	renderValue() {
 		const { many } = this.props;
 		const { value } = this.state;
@@ -301,6 +301,7 @@ module.exports = Field.create({
 
 		return many ? this.renderSelect(true) : <FormInput {...props} />;
 	},
+
 	renderField() {
 		if (this.props.createInline) {
 			return this.renderInputGroup();
