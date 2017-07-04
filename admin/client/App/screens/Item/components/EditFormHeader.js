@@ -1,12 +1,12 @@
 import React from 'react';
 import { findDOMNode } from 'react-dom';
 import { connect } from 'react-redux';
+import xhr from 'xhr';
 
 import Toolbar from './Toolbar';
 import ToolbarSection from './Toolbar/ToolbarSection';
 import EditFormHeaderSearch from './EditFormHeaderSearch';
 import { Link } from 'react-router';
-
 import Drilldown from './Drilldown';
 import { GlyphButton, ResponsiveText } from '../../../elemental';
 
@@ -17,6 +17,9 @@ export const EditFormHeader = React.createClass({
 		list: React.PropTypes.object,
 		toggleCreate: React.PropTypes.func,
 	},
+  contextTypes: {
+    router: React.PropTypes.object.isRequired,
+  },
 	getInitialState () {
 		return {
 			searchString: '',
@@ -126,24 +129,31 @@ export const EditFormHeader = React.createClass({
 	renderInfo () {
 		return (
 			<ToolbarSection right>
-				{this.renderCreateButton()}
+        {this.renderDuplicateButton()}
 			</ToolbarSection>
 		);
 	},
-	renderCreateButton () {
-		const { nocreate, autocreate, singular } = this.props.list;
-
-		if (nocreate) return null;
-
-		let props = {};
-		if (autocreate) {
-			props.href = '?new' + Keystone.csrf.query;
-		} else {
-			props.onClick = () => { this.toggleCreate(true); };
-		}
+  duplicateClicked () {
+    xhr({
+      url: `${Keystone.adminPath}/api/${this.props.list.path}/${this.props.data.id}/duplicate`,
+      responseType: 'json',
+      method: 'POST',
+    }, (error, resp, data) => {
+      if (error) {
+        console.log('error', error);
+      } else {
+        this.context.router.push(`${Keystone.adminPath}/${this.props.list.path}/${data.id}`);
+      }
+    });
+  },
+	renderDuplicateButton () {
+		const { singular } = this.props.list;
+    let props = {
+      onClick: this.duplicateClicked
+    };
 		return (
-			<GlyphButton data-e2e-item-create-button="true" color="success" glyph="plus" position="left" {...props}>
-				<ResponsiveText hiddenXS={`New ${singular}`} visibleXS="Create" />
+			<GlyphButton data-e2e-item-create-button="true" color="warning" glyph="plus" position="left" {...props}>
+				<ResponsiveText hiddenXS={`Duplicate this ${singular}`} visibleXS="Duplicate" />
 			</GlyphButton>
 		);
 	},
