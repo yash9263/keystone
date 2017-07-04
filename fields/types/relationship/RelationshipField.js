@@ -203,6 +203,12 @@ module.exports = Field.create({
 		}
 	},
 
+	inputChanged(value) {
+		if (!this.props.disabled) {
+			this.loadOptions(value);
+		}
+	},
+
 	openCreate() {
 		this.setState({
 			createIsOpen: true,
@@ -258,6 +264,7 @@ module.exports = Field.create({
 					labelKey="name"
 					name={this.getInputName(this.props.path)}
 					onChange={this.valueChanged}
+					onInputChange={this.inputChanged}
 					simpleValue
 					value={this.state.value}
 					valueKey="id"
