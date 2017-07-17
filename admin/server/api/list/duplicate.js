@@ -19,6 +19,9 @@ function duplicate(listName, query, keystone, user, parent) {
             if (item.uuid) {
               item.uuid = null;
             }
+            if (item.isMonetized) {
+              item.isMonetized = false;
+            }
             if (parent) {
               item[parent.name] = parent.id
             }
