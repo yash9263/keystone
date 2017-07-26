@@ -22,8 +22,14 @@ function duplicate(listName, query, keystone, user, parent) {
             if (item.isMonetized) {
               item.isMonetized = false;
             }
+            if (item.neo4jId) {
+              item.neo4jId = null;
+            }
+            if (item.existsOnSorbet) {
+              item.existsOnSorbet = false;
+            }
             if (parent) {
-              item[parent.name] = parent.id
+              item[parent.name] = parent.id;
             }
             list.updateItem(duplicated, item, {
               ignoreNoEdit: true,
