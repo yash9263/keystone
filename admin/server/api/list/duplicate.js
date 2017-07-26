@@ -28,6 +28,9 @@ function duplicate(listName, query, keystone, user, parent) {
             if (item.existsOnSorbet) {
               item.existsOnSorbet = false;
             }
+            if (item.legacyCode) {
+              item.legacyCode = null;
+            }
             if (parent) {
               item[parent.name] = parent.id;
             }
