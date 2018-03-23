@@ -31,15 +31,19 @@ function duplicate(listName, query, keystone, user, parent) {
             if (item.legacyCode) {
               item.legacyCode = null;
             }
-		    if (item.verifiedBy) {
-			  item.verifiedBy = null;
-			}
-			if (item.verifiedAt) {
-			  item.verifiedAt = null;
-		    }
-		    if (item.verified) {
-			  item.verified = null;
-		    }
+            if (item.verifiedBy) {
+              item.verifiedBy = null;
+            }
+            if (item.verifiedAt) {
+              item.verifiedAt = null;
+            }
+            if (item.verified) {
+              item.verified = null;
+            }
+            if (item.cardArt) {
+              let supObj = Object.getPrototypeOf(item);
+              delete supObj.cardArt;
+            }
             if (parent) {
               item[parent.name] = parent.id;
             }
