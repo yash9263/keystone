@@ -2,21 +2,24 @@
 TODO: Needs Review and Spec
 */
 
-var moment = require('moment');
-var assign = require('object-assign');
+var moment = require("moment");
+var assign = require("object-assign");
 
 module.exports = function (req, res, next) {
-	var baby = require('babyparse');
+	var baby = require("babyparse");
 	var keystone = req.keystone;
 
-	var format = req.params.format.split('.')[1]; // json or csv
+	var format = req.params.format.split(".")[1]; // json or csv
 	var where = {};
 	var filters = req.query.filters;
-	if (filters && typeof filters === 'string') {
-		try { filters = JSON.parse(req.query.filters); }
-		catch (e) { /* */ }
+	if (filters && typeof filters === "string") {
+		try {
+			filters = JSON.parse(req.query.filters);
+		} catch (e) {
+			/* */
+		}
 	}
-	if (typeof filters === 'object') {
+	if (typeof filters === "object") {
 		assign(where, req.list.addFiltersToQuery(filters));
 	}
 	if (req.query.search) {
@@ -33,11 +36,12 @@ module.exports = function (req, res, next) {
 	}
 	var sort = req.list.expandSort(req.query.sort);
 	query.sort(sort.string);
-	query.exec()
+	query
+		.exec()
 		.then(function (results) {
 			var data;
 			var fields = [];
-			if (format === 'csv') {
+			if (format === "csv") {
 				data = results.map(function (item) {
 					var row = req.list.getCSVData(item, {
 						expandRelationshipFields: req.query.expandRelationshipFields,
@@ -53,18 +57,27 @@ module.exports = function (req, res, next) {
 					});
 					return row;
 				});
-				res.attachment(req.list.path + '-' + moment().format('YYYYMMDD-HHMMSS') + '.csv');
-				res.setHeader('Content-Type', 'application/octet-stream');
-				var content = baby.unparse({
-					data: data,
-					fields: fields,
-				}, {
-					delimiter: keystone.get('csv field delimiter') || ',',
-				});
-				res.end(content, 'utf-8');
+				res.attachment(
+					req.list.path + "-" + moment().format("YYYYMMDD-HHMMSS") + ".csv"
+				);
+				res.setHeader("Content-Type", "application/octet-stream");
+				var content = baby.unparse(
+					{
+						data: data,
+						fields: fields,
+					},
+					{
+						delimiter: keystone.get("csv field delimiter") || ",",
+					}
+				);
+				res.end("\ufeff" + content, "utf-8");
 			} else {
 				data = results.map(function (item) {
-					return req.list.getData(item, req.query.select, req.query.expandRelationshipFields);
+					return req.list.getData(
+						item,
+						req.query.select,
+						req.query.expandRelationshipFields
+					);
 				});
 				res.json(data);
 			}
