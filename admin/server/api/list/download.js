@@ -61,7 +61,7 @@ module.exports = function (req, res, next) {
 			}, {
 				delimiter: keystone.get('csv field delimiter') || ',',
 			});
-			res.end(content, 'utf-8');
+			res.end("\ufeff" + content, 'utf-8');
 		} else {
 			data = results.map(function (item) {
 				return req.list.getData(item, req.query.select, req.query.expandRelationshipFields);
