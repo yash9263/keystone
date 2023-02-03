@@ -3,23 +3,23 @@
  * version in use
  */
 
-import React from "react";
-import { css } from "glamor";
-import { Container } from "../../elemental";
-import theme from "../../../theme";
+import React from 'react';
+import { css } from 'glamor';
+import { Container } from '../../elemental';
+import theme from '../../../theme';
 
 var Footer = React.createClass({
-	displayName: "Footer",
+	displayName: 'Footer',
 	propTypes: {
 		appversion: React.PropTypes.string,
 		backUrl: React.PropTypes.string,
 		brand: React.PropTypes.string,
 		user: React.PropTypes.object,
 		User: React.PropTypes.object, // eslint-disable-line react/sort-prop-types
-		version: React.PropTypes.string
+		version: React.PropTypes.string,
 	},
 	// Render the user
-	renderUser() {
+	renderUser () {
 		const { User, user } = this.props;
 		if (!user) return null;
 
@@ -37,14 +37,14 @@ var Footer = React.createClass({
 			</span>
 		);
 	},
-	render() {
+	render () {
 		const { backUrl, brand, appversion, version } = this.props;
 
 		return (
 			<footer className={css(classes.footer)} data-keystone-footer>
 				<Container>
 					<a href={backUrl} tabIndex="-1" className={css(classes.link)}>
-						{brand + (appversion ? " " + appversion : "")}
+						{brand + (appversion ? ' ' + appversion : '')}
 					</a>
 					<span> powered by </span>
 					<a
@@ -60,29 +60,29 @@ var Footer = React.createClass({
 				</Container>
 			</footer>
 		);
-	}
+	},
 });
 
 /* eslint quote-props: ["error", "as-needed"] */
 const linkHoverAndFocus = {
 	color: theme.color.gray60,
-	outline: "none"
+	outline: 'none',
 };
 const classes = {
 	footer: {
-		boxShadow: "0 -1px 0 rgba(0, 0, 0, 0.1)",
+		boxShadow: '0 -1px 0 rgba(0, 0, 0, 0.1)',
 		color: theme.color.gray40,
 		fontSize: theme.font.size.small,
 		paddingBottom: 30,
 		paddingTop: 40,
-		textAlign: "center"
+		textAlign: 'center',
 	},
 	link: {
 		color: theme.color.gray60,
 
-		":hover": linkHoverAndFocus,
-		":focus": linkHoverAndFocus
-	}
+		':hover': linkHoverAndFocus,
+		':focus': linkHoverAndFocus,
+	},
 };
 
 module.exports = Footer;

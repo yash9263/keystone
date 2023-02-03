@@ -1,18 +1,18 @@
-import async from "async";
-import Field from "../Field";
-import { listsByKey } from "../../../admin/client/utils/lists";
-import React from "react";
-import Select from "react-select";
-import xhr from "xhr";
+import async from 'async';
+import Field from '../Field';
+import { listsByKey } from '../../../admin/client/utils/lists';
+import React from 'react';
+import Select from 'react-select';
+import xhr from 'xhr';
 import {
 	Button,
 	FormInput,
 	InlineGroup as Group,
 	InlineGroupSection as Section,
-} from "../../../admin/client/App/elemental";
-import _ from "lodash";
+} from '../../../admin/client/App/elemental';
+import _ from 'lodash';
 
-function compareValues(current, next) {
+function compareValues (current, next) {
 	const currentLength = current ? current.length : 0;
 	const nextLength = next ? next.length : 0;
 	if (currentLength !== nextLength) return false;
@@ -23,12 +23,12 @@ function compareValues(current, next) {
 }
 
 module.exports = Field.create({
-	displayName: "RelationshipField",
+	displayName: 'RelationshipField',
 	statics: {
-		type: "Relationship",
+		type: 'Relationship',
 	},
 
-	getInitialState() {
+	getInitialState () {
 		return {
 			value: null,
 			createIsOpen: false,
@@ -38,23 +38,23 @@ module.exports = Field.create({
 		};
 	},
 
-	componentDidMount() {
+	componentDidMount () {
 		this._itemsCache = {};
 		this.loadValue(this.props.value);
-		this.loadOptions("");
+		this.loadOptions('');
 	},
 
-	componentWillReceiveProps(nextProps) {
-		this.loadOptions("", nextProps.values);
+	componentWillReceiveProps (nextProps) {
+		this.loadOptions('', nextProps.values);
 		if (
-			nextProps.value === this.props.value ||
-			(nextProps.many && compareValues(this.props.value, nextProps.value))
+			nextProps.value === this.props.value
+			|| (nextProps.many && compareValues(this.props.value, nextProps.value))
 		)
-			return;
+		{ return; }
 		this.loadValue(nextProps.value);
 	},
 
-	shouldCollapse() {
+	shouldCollapse () {
 		if (this.props.many) {
 			// many:true relationships have an Array for a value
 			return this.props.collapse && !this.props.value.length;
@@ -62,14 +62,14 @@ module.exports = Field.create({
 		return this.props.collapse && !this.props.value;
 	},
 
-	buildFilters(props) {
+	buildFilters (props) {
 		var filters = {};
 		_.forEach(
 			this.props.filters,
 			(value, key) => {
-				if (typeof value === "string" && value[0] === ":") {
+				if (typeof value === 'string' && value[0] === ':') {
 					var fieldName = value.slice(1);
-					var val = "";
+					var val = '';
 					if (props) {
 						val = props[fieldName];
 					} else {
@@ -81,7 +81,7 @@ module.exports = Field.create({
 					}
 
 					// check if filtering by id and item was already saved
-					if (fieldName === ":_id" && Keystone.item) {
+					if (fieldName === ':_id' && Keystone.item) {
 						filters[key] = Keystone.item.id;
 						return;
 					}
@@ -95,26 +95,26 @@ module.exports = Field.create({
 		var parts = [];
 
 		_.forEach(filters, function (val, key) {
-			parts.push("filters[" + key + "][value]=" + encodeURIComponent(val));
+			parts.push('filters[' + key + '][value]=' + encodeURIComponent(val));
 		});
 
-		return parts.join("&");
+		return parts.join('&');
 	},
 
-	cacheItem(item) {
-		item.href =
-			Keystone.adminPath + "/" + this.props.refList.path + "/" + item.id;
+	cacheItem (item) {
+		item.href
+			= Keystone.adminPath + '/' + this.props.refList.path + '/' + item.id;
 		this._itemsCache[item.id] = item;
 	},
 
-	loadValue(values) {
+	loadValue (values) {
 		if (!values) {
 			return this.setState({
 				loading: false,
 				value: null,
 			});
 		}
-		values = Array.isArray(values) ? values : values.split(",");
+		values = Array.isArray(values) ? values : values.split(',');
 		const cachedValues = values
 			.map((i) => this._itemsCache[i])
 			.filter((i) => i);
@@ -135,13 +135,13 @@ module.exports = Field.create({
 				xhr(
 					{
 						url:
-							Keystone.adminPath +
-							"/api/" +
-							this.props.refList.path +
-							"/" +
-							value +
-							"?basic",
-						responseType: "json",
+							Keystone.adminPath
+							+ '/api/'
+							+ this.props.refList.path
+							+ '/'
+							+ value
+							+ '?basic',
+						responseType: 'json',
 					},
 					(err, resp, data) => {
 						if (err || !data) return done(err);
@@ -160,7 +160,7 @@ module.exports = Field.create({
 		);
 	},
 
-	loadOptions(input, props) {
+	loadOptions (input, props) {
 		// NOTE: this seems like the wrong way to add options to the Select
 
 		this.setState({ isLoadingOptions: true });
@@ -168,18 +168,18 @@ module.exports = Field.create({
 		xhr(
 			{
 				url:
-					Keystone.adminPath +
-					"/api/" +
-					this.props.refList.path +
-					"?basic&search=" +
-					input +
-					"&" +
-					filters,
-				responseType: "json",
+					Keystone.adminPath
+					+ '/api/'
+					+ this.props.refList.path
+					+ '?basic&search='
+					+ input
+					+ '&'
+					+ filters,
+				responseType: 'json',
 			},
 			(err, resp, data) => {
 				if (err) {
-					console.error("Error loading items:", err);
+					console.error('Error loading items:', err);
 					return this.setState({ isLoadingOptions: false, options: [] });
 				}
 
@@ -194,7 +194,7 @@ module.exports = Field.create({
 		this.setState({ isLoadingOptions: false });
 	},
 
-	valueChanged(value) {
+	valueChanged (value) {
 		if (!this.props.disabled) {
 			this.props.onChange({
 				path: this.props.path,
@@ -203,31 +203,31 @@ module.exports = Field.create({
 		}
 	},
 
-	inputChanged(value) {
+	inputChanged (value) {
 		if (!this.props.disabled) {
 			this.loadOptions(value);
 		}
 	},
 
-	openCreate() {
+	openCreate () {
 		this.setState({
 			createIsOpen: true,
 		});
 	},
 
-	closeCreate() {
+	closeCreate () {
 		this.setState({
 			createIsOpen: false,
 		});
 	},
 
-	onCreate(item) {
+	onCreate (item) {
 		this.cacheItem(item);
 		if (Array.isArray(this.state.value)) {
 			// For many relationships, append the new item to the end
 			const values = this.state.value.map((item) => item.id);
 			values.push(item.id);
-			this.valueChanged(values.join(","));
+			this.valueChanged(values.join(','));
 		} else {
 			this.valueChanged(item.id);
 		}
@@ -240,14 +240,14 @@ module.exports = Field.create({
 		this.closeCreate();
 	},
 
-	renderSelect(noedit) {
+	renderSelect (noedit) {
 		return (
 			<div>
 				{/* This input element fools Safari's autocorrect in certain situations that completely break react-select */}
 				<input
 					type="text"
 					style={{
-						position: "absolute",
+						position: 'absolute',
 						width: 1,
 						height: 1,
 						zIndex: -1,
@@ -273,13 +273,13 @@ module.exports = Field.create({
 		);
 	},
 
-	renderInputGroup() {
+	renderInputGroup () {
 		// TODO: find better solution
 		//   when importing the CreateForm using: import CreateForm from '../../../admin/client/App/shared/CreateForm';
 		//   CreateForm was imported as a blank object. This stack overflow post suggested lazilly requiring it:
 		// http://stackoverflow.com/questions/29807664/cyclic-dependency-returns-empty-object-in-react-native
 		// TODO: Implement this somewhere higher in the app, it breaks the encapsulation of the RelationshipField component
-		const CreateForm = require("../../../admin/client/App/shared/CreateForm");
+		const CreateForm = require('../../../admin/client/App/shared/CreateForm');
 		return (
 			<Group block>
 				<Section grow>{this.renderSelect()}</Section>
@@ -296,12 +296,12 @@ module.exports = Field.create({
 		);
 	},
 
-	renderValue() {
+	renderValue () {
 		const { many } = this.props;
 		const { value } = this.state;
 		const props = {
 			children: value ? value.name : null,
-			component: value ? "a" : "span",
+			component: value ? 'a' : 'span',
 			href: value ? value.href : null,
 			noedit: true,
 		};
@@ -309,7 +309,7 @@ module.exports = Field.create({
 		return many ? this.renderSelect(true) : <FormInput {...props} />;
 	},
 
-	renderField() {
+	renderField () {
 		if (this.props.createInline) {
 			return this.renderInputGroup();
 		} else {

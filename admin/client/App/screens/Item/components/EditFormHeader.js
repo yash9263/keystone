@@ -17,9 +17,9 @@ export const EditFormHeader = React.createClass({
 		list: React.PropTypes.object,
 		toggleCreate: React.PropTypes.func,
 	},
-  contextTypes: {
-    router: React.PropTypes.object.isRequired,
-  },
+	contextTypes: {
+		router: React.PropTypes.object.isRequired,
+	},
 	getInitialState () {
 		return {
 			searchString: '',
@@ -129,28 +129,28 @@ export const EditFormHeader = React.createClass({
 	renderInfo () {
 		return (
 			<ToolbarSection right>
-        {this.renderDuplicateButton()}
+				{this.renderDuplicateButton()}
 			</ToolbarSection>
 		);
 	},
-  duplicateClicked () {
-    xhr({
-      url: `${Keystone.adminPath}/api/${this.props.list.path}/${this.props.data.id}/duplicate`,
-      responseType: 'json',
-      method: 'POST',
-    }, (error, resp, data) => {
-      if (error) {
-        console.log('error', error);
-      } else {
-        this.context.router.push(`${Keystone.adminPath}/${this.props.list.path}/${data.id}`);
-      }
-    });
-  },
+	duplicateClicked () {
+		xhr({
+			url: `${Keystone.adminPath}/api/${this.props.list.path}/${this.props.data.id}/duplicate`,
+			responseType: 'json',
+			method: 'POST',
+		}, (error, resp, data) => {
+			if (error) {
+				console.log('error', error);
+			} else {
+				this.context.router.push(`${Keystone.adminPath}/${this.props.list.path}/${data.id}`);
+			}
+		});
+	},
 	renderDuplicateButton () {
 		const { singular } = this.props.list;
-    let props = {
-      onClick: this.duplicateClicked
-    };
+		let props = {
+			onClick: this.duplicateClicked,
+		};
 		return (
 			<GlyphButton data-e2e-item-create-button="true" color="warning" glyph="plus" position="left" {...props}>
 				<ResponsiveText hiddenXS={`Duplicate this ${singular}`} visibleXS="Duplicate" />

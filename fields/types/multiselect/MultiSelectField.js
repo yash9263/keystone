@@ -39,13 +39,13 @@ module.exports = Field.create({
 	renderSelect () {
 		var ops = this.props.ops;
 		var value = this.props.value;
-		return <Select
+		return (<Select
 			simpleValue
-			multi={true}
+			multi
 			name={this.getInputName(this.props.path)}
 			value={value}
 			options={ops}
-			onChange={this.valueChanged} />;
+		onChange={this.valueChanged} />);
 	},
 
 	renderValue () {

@@ -1,28 +1,28 @@
-import React from "react";
-import numeral from "numeral";
-import "whatwg-fetch";
-import FormData from "form-data";
-import ItemsTableCell from "../../components/ItemsTableCell";
-import ItemsTableValue from "../../components/ItemsTableValue";
-import { FormInput } from "../../../admin/client/App/elemental";
+import React from 'react';
+import numeral from 'numeral';
+import 'whatwg-fetch';
+import FormData from 'form-data';
+import ItemsTableCell from '../../components/ItemsTableCell';
+import ItemsTableValue from '../../components/ItemsTableValue';
+import { FormInput } from '../../../admin/client/App/elemental';
 
 var NumberColumn = React.createClass({
-	displayName: "NumberColumn",
+	displayName: 'NumberColumn',
 	propTypes: {
 		col: React.PropTypes.object,
 		data: React.PropTypes.object,
 	},
-	getInitialState() {
+	getInitialState () {
 		return {
 			value: null,
 			editing: false,
-			color: "black",
+			color: 'black',
 		};
 	},
-	value() {
+	value () {
 		return this.state.value || this.props.data.fields[this.props.col.path];
 	},
-	renderValue() {
+	renderValue () {
 		const value = this.value();
 		if (this.state.editing) {
 			return (
@@ -42,41 +42,41 @@ var NumberColumn = React.createClass({
 			);
 		} else {
 			if (!value || isNaN(value)) return value;
-			return this.props.col.path === "money"
-				? numeral(value).format("$0,0.00")
+			return this.props.col.path === 'money'
+				? numeral(value).format('$0,0.00')
 				: value;
 		}
 	},
-	onKeyPress(event) {
-		if (event.nativeEvent && event.nativeEvent.code === "Enter") {
+	onKeyPress (event) {
+		if (event.nativeEvent && event.nativeEvent.code === 'Enter') {
 			this.onBlur();
 		}
 	},
-	onChange(event) {
+	onChange (event) {
 		this.setState({ value: event.target.value });
 	},
-	onClick() {
+	onClick () {
 		this.shouldSelect = true;
 		this.setState({ editing: true });
 	},
-	onBlur() {
+	onBlur () {
 		const url = `/keystone/api/${this.props.list.path}/${this.props.data.id}`;
 		var form = new FormData();
 		form.append(this.props.col.path, this.value());
-		fetch(url, { method: "POST", body: form, credentials: "same-origin" }).then(
+		fetch(url, { method: 'POST', body: form, credentials: 'same-origin' }).then(
 			(response) => {
 				response.json().then((json) => {
 					if (json.error) {
-						this.setState({ color: "red" });
+						this.setState({ color: 'red' });
 					} else {
-						this.setState({ color: "green" });
+						this.setState({ color: 'green' });
 					}
 				});
 			}
 		);
 		this.setState({ editing: false });
 	},
-	render() {
+	render () {
 		return (
 			<ItemsTableCell onClick={this.onClick.bind(this)}>
 				<ItemsTableValue

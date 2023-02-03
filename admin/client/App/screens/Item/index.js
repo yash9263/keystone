@@ -5,46 +5,46 @@
  * item. This mainly renders the form to edit the item content in.
  */
 
-import React from "react";
-import { Center, Container, Spinner } from "../../elemental";
-import { connect } from "react-redux";
-import { Link } from "react-router";
+import React from 'react';
+import { Center, Container, Spinner } from '../../elemental';
+import { connect } from 'react-redux';
+import { Link } from 'react-router';
 
-import { listsByKey } from "../../../utils/lists";
-import CreateForm from "../../shared/CreateForm";
-import Alert from "../../elemental/Alert";
-import EditForm from "./components/EditForm";
-import EditFormHeader from "./components/EditFormHeader";
-import RelatedItemsList from "./components/RelatedItemsList/RelatedItemsList";
+import { listsByKey } from '../../../utils/lists';
+import CreateForm from '../../shared/CreateForm';
+import Alert from '../../elemental/Alert';
+import EditForm from './components/EditForm';
+import EditFormHeader from './components/EditFormHeader';
+import RelatedItemsList from './components/RelatedItemsList/RelatedItemsList';
 // import FlashMessages from '../../shared/FlashMessages';
 
-import { selectItem, loadItemData } from "./actions";
+import { selectItem, loadItemData } from './actions';
 
-import { selectList } from "../List/actions";
+import { selectList } from '../List/actions';
 
 var ItemView = React.createClass({
-	displayName: "ItemView",
+	displayName: 'ItemView',
 	contextTypes: {
 		router: React.PropTypes.object.isRequired,
 	},
-	getInitialState() {
+	getInitialState () {
 		return {
 			createIsOpen: false,
 		};
 	},
-	componentDidMount() {
+	componentDidMount () {
 		// When we directly navigate to an item without coming from another client
 		// side routed page before, we need to select the list before initializing the item
 		// We also need to update when the list id has changed
 		if (
-			!this.props.currentList ||
-			this.props.currentList.id !== this.props.params.listId
+			!this.props.currentList
+			|| this.props.currentList.id !== this.props.params.listId
 		) {
 			this.props.dispatch(selectList(this.props.params.listId));
 		}
 		this.initializeItem(this.props.params.itemId);
 	},
-	componentWillReceiveProps(nextProps) {
+	componentWillReceiveProps (nextProps) {
 		// We've opened a new item from the client side routing, so initialize
 		// again with the new item id
 		if (nextProps.params.itemId !== this.props.params.itemId) {
@@ -53,12 +53,12 @@ var ItemView = React.createClass({
 		}
 	},
 	// Initialize an item
-	initializeItem(itemId) {
+	initializeItem (itemId) {
 		this.props.dispatch(selectItem(itemId));
 		this.props.dispatch(loadItemData());
 	},
 	// Called when a new item is created
-	onCreate(item) {
+	onCreate (item) {
 		// Hide the create form
 		this.toggleCreateModal(false);
 		// Redirect to newly created item path
@@ -66,13 +66,13 @@ var ItemView = React.createClass({
 		this.context.router.push(`${Keystone.adminPath}/${list.path}/${item.id}`);
 	},
 	// Open and close the create new item modal
-	toggleCreateModal(visible) {
+	toggleCreateModal (visible) {
 		this.setState({
 			createIsOpen: visible,
 		});
 	},
 	// Render this items relationships
-	renderRelationships() {
+	renderRelationships () {
 		const { relationships } = this.props.currentList;
 		const keys = Object.keys(relationships);
 		if (!keys.length) return;
@@ -83,8 +83,8 @@ var ItemView = React.createClass({
 					{keys.map((key) => {
 						const relationship = relationships[key];
 						const refList = listsByKey[relationship.ref];
-						const { currentList, params, relationshipData, drag, data } =
-							this.props;
+						const { currentList, params, relationshipData, drag, data }
+							= this.props;
 						return (
 							<RelatedItemsList
 								key={relationship.path}
@@ -104,14 +104,14 @@ var ItemView = React.createClass({
 		);
 	},
 	// Handle errors
-	handleError(error) {
+	handleError (error) {
 		const detail = error.detail;
 		if (detail) {
 			// Item not found
-			if (detail.name === "CastError" && detail.path === "_id") {
+			if (detail.name === 'CastError' && detail.path === '_id') {
 				return (
 					<Container>
-						<Alert color="danger" style={{ marginTop: "2em" }}>
+						<Alert color="danger" style={{ marginTop: '2em' }}>
 							No item matching id "{this.props.routeParams.itemId}".&nbsp;
 							<Link
 								to={`${Keystone.adminPath}/${this.props.routeParams.listId}`}
@@ -125,10 +125,10 @@ var ItemView = React.createClass({
 		}
 		if (error.message) {
 			// Server down + possibly other errors
-			if (error.message === "Internal XMLHttpRequest Error") {
+			if (error.message === 'Internal XMLHttpRequest Error') {
 				return (
 					<Container>
-						<Alert color="danger" style={{ marginTop: "2em" }}>
+						<Alert color="danger" style={{ marginTop: '2em' }}>
 							We encountered some network problems, please refresh.
 						</Alert>
 					</Container>
@@ -137,13 +137,13 @@ var ItemView = React.createClass({
 		}
 		return (
 			<Container>
-				<Alert color="danger" style={{ marginTop: "2em" }}>
+				<Alert color="danger" style={{ marginTop: '2em' }}>
 					An unknown error has ocurred, please refresh.
 				</Alert>
 			</Container>
 		);
 	},
-	render() {
+	render () {
 		// If we don't have any data yet, show the loading indicator
 		if (!this.props.ready) {
 			return (
